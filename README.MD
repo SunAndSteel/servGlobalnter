@@ -1,8 +1,8 @@
 # Serveur global linux django
 - Florent Urbain G1
-- Antoine Mauroit G2
-- Kyllian Evrard G3
-- Max Decamps G4
+- Kyllian Evrard G2
+- Max Decamps G3
+- Antoine Mauroit G4
 
 ## Utilisation de git
 #### [Tutoriel en français sur git](https://www.atlassian.com/fr/git/tutorials)
