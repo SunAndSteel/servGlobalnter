@@ -25,15 +25,6 @@ CREATE TABLE alerte_departement (
     FOREIGN KEY(departement_id) REFERENCES departement(departement_id)
 );
 
-CREATE TABLE chambre (
-  PRIMARY KEY (chambre_id),
-  chambre_id        INT NOT NULL AUTO_INCREMENT,
-  date_creation     DATE DEFAULT NOW(),
-  date_modification DATE DEFAULT NOW(),
-  departement_id INT NOT NULL,
-  FOREIGN KEY(departement_id) REFERENCES departement(departement_id)
-);
-
 
 CREATE TABLE equipement (
   PRIMARY KEY (equipement_id),
@@ -52,8 +43,7 @@ CREATE TABLE lit (
   type_lit          ENUM('Standard', 'Pédiatrique', 'Intensif'),
   date_creation     DATE DEFAULT NOW(),
   date_modification DATE DEFAULT NOW(),
-  chambre_id        INT,
-   FOREIGN KEY(chambre_id) REFERENCES chambre(chambre_id)
+  chambre        INT
 );
 
 CREATE TABLE patient (
@@ -68,7 +58,9 @@ CREATE TABLE patient (
   date_creation     DATE DEFAULT NOW(),
   date_modification DATE DEFAULT NOW(),
   lit_id            INT,
-  FOREIGN KEY(lit_id) REFERENCES lit(lit_id)
+  FOREIGN KEY(lit_id) REFERENCES lit(lit_id),
+  departement_id INT,
+  FOREIGN KEY(departement_id) REFERENCES departement(departement_id)
 );
 
 CREATE TABLE personnel_medical (
@@ -119,27 +111,12 @@ BEGIN
 
     SET dep = 1;
 
-    -- Chambre ---------------------------------
-    WHILE i <= 50 DO
-        INSERT INTO chambre (departement_id)
-        VALUES (dep);
-        SET i = i + 1;
-    END WHILE;
-
-    SET i = 1;
 
 -- Departement 3 (Soins Intensifs) --------------------------------------------------
 
     SET dep = 3;
 
-    -- Chambre ---------------------------------
-    WHILE i <= 26 DO
-        INSERT INTO chambre (departement_id)
-        VALUES (dep);
-        SET i = i + 1;
-    END WHILE;
 
-    SET i = 1;
 
     -- Equipement -----------------------------
     WHILE i <= 43 DO
@@ -204,13 +181,7 @@ BEGIN
     SET dep = 2;
 
     -- Chambres ------------------------------------------------
-    WHILE i <= 13 DO
-        INSERT INTO chambre (departement_id)
-        VALUES (dep);
-        SET i = i + 1;
-    END WHILE;
-
-    SET i = 1;
+  
 
     -- Equipement ----------------------------------------------
     WHILE i <= 50 DO
@@ -272,14 +243,7 @@ BEGIN
     SET i = 1;
     SET dep = 4;
 
-    -- Chambre ---------------------------------
-    WHILE i <= 11 DO
-        INSERT INTO chambre (departement_id)
-        VALUES (dep);
-        SET i = i + 1;
-    END WHILE;
-
-    SET i = 1;
+    
 
     -- Equipement --------------------------
     WHILE i <= 15 DO
