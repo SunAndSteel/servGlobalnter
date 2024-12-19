@@ -130,7 +130,7 @@ BEGIN
 
     WHILE i <= 100 DO 
         INSERT INTO lit(type_lit, departement_id) 
-        VALUES ('Intensifs', dep) ;
+        VALUES ('Intensif', dep) ;
         SET i = i + 1 ;
     END WHILE;
 
