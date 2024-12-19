@@ -16,9 +16,14 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-
+import syncDB.views
 
 urlpatterns = [
     path('', admin.site.urls),
-    path('api/', admin.site.urls),    
+    path('api/', admin.site.urls),
+
+    urlpatterns= [
+        path('api/updates/', LocalUpdateAPIView.as_view(), name='local_updates'),
+        path('api/syncDB/', include('syncDB.urls')),
+    ]
 ]

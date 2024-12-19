@@ -1,26 +1,24 @@
 import ldap
 from django_auth_ldap.config import LDAPSearch
+import ssl
+
 
 from pathlib import Path
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-p(e5+^2xg^3k=^32pv6o*n!)$h3yn+1a*@1nt=8hy#ius$a=dz'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
+# Tous les sous domaines de hopital.lan seront autorisés à faire
+# des requêtes SQL
 ALLOWED_HOSTS = ['hospital.lan', '127.0.0.1']
 
 
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -68,7 +66,7 @@ WSGI_APPLICATION = 'servGeneral.wsgi.application'
 DB = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': BASE_DIR / 'db/dbglobale.mysql',
+        'NAME': BASE_DIR / 'db.mysql',
     }
 }
 
@@ -91,10 +89,11 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+LDAP_AUTH_TLS_VERSION = ssl.PROTOCOL_TLSv1_2
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'fr-fr'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'UTC+1'
 
 USE_I18N = True
 
@@ -107,26 +106,23 @@ STATIC_URL = 'static/'
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
-
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 AUTHENTICATION_BACKENDS = [
     'servGeneral.middleware.LDAPBackend',
+    'django_python3_ldap.auth.LDAPBackend',
     'django.contrib.auth.backends.ModelBackend',
 ]
 
-AUTH_LDAP_SERVER_URI = "ldap://SERVER-HOPITAL.hopital.lan"
-AUTH_LDAP_BIND_DN = "CN=LDAPUsers,CN=Users,DC=hopital,DC=lan"
-AUTH_LDAP_BIND_PASSWORD = "PASSWORD"
 
-AUTH_LDAP_USER_ATTR_MAP = {
-  "username": "sAMAccountName",
-  "first_name": "givenName",
-  "last_name": "sn",
-  "email": "mail",
+LDAP_AUTH_URL = "ldap://SERVER-HOPITAL.hopital.lan"
+LDAP_AUTH_SEARCH_BASE = "ou=users,dc=hopital,dc=lan"
+LDAP_AUTH_USER_FIELDS = {
+    "username": "sAMAccountName",
+    "email": "mail",
+    "first_name": "givenName",
+    "last_name": "sn",
 }
 
 LOGIN_REDIRECT_URL = '/'
