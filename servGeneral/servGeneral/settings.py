@@ -116,6 +116,7 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 
+# Faut trouver le bon groupe de l'user
 LDAP_AUTH_URL = "ldap://SERVER-HOPITAL.hopital.lan"
 LDAP_AUTH_SEARCH_BASE = "ou=users,dc=hopital,dc=lan"
 LDAP_AUTH_USER_FIELDS = {

@@ -2,15 +2,12 @@ from django.http import HttpResponseForbidden
 from django.shortcuts import redirect
 
 
-ALLOWED_IP_VLAN10 = "172.16.0.0/16"
-ALLOWED_IP_VLAN20 = "172.17.0.0/16"
-ALLOWED_IP_VLAN30 = "172.18.0.0/16"
-ALLOWED_IP_VLAN40 = "172.19.0.0/16"
+ALLOWED_IP_RANGES = ["172.16.0.0/16", "172.17.0.0/16", "172.18.0.0/16", "172.19.0.0/16"]
 
 
 class IPValidationMiddleware:
     """
-    Validation par IP, vérifier que l’user a une IP dans le bon VLAN.
+    Validation par IP, vérifier que l’user a une IP autorisée.
     """
     
     def __init__(self, get_response):
@@ -19,7 +16,9 @@ class IPValidationMiddleware:
     def __call__(self, request):
 
         client_ip = self.get_client_ip(request)
-
+        if not any(client_ip.startswith(allowed) for allowed in self.ALLOWED_IP_RANGES):
+            from django.http import HttpResponseForbidden
+            return HttpResponseForbidden("Forbidden")
         return self.get_response(request)
 
     def get_client_ip(self, request):
