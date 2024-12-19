@@ -1,4 +1,8 @@
--- Création par Dowson et Wiktor
+-- Réalisé par Dowson et Wiktor
+
+CREATE DATABASE IF NOT EXISTS hopital DEFAULT CHARACTER SET utf8;
+
+USE hopital;
 
 CREATE TABLE alerte (
   PRIMARY KEY (alerte_id),
@@ -6,7 +10,7 @@ CREATE TABLE alerte (
   alerte_type   ENUM('lit', 'equipement'),
   alerte_description   VARCHAR(255),
   resolu        BOOLEAN,
-  date_creation DATE DEFAULT NOW()
+  date_creation TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE departement (
@@ -25,13 +29,12 @@ CREATE TABLE alerte_departement (
     FOREIGN KEY(departement_id) REFERENCES departement(departement_id)
 );
 
-
 CREATE TABLE equipement (
   PRIMARY KEY (equipement_id),
   equipement_id     INT NOT NULL AUTO_INCREMENT,
   type_equipement              VARCHAR(255),
   disponible           BOOLEAN DEFAULT 1,
-  date_modification DATE DEFAULT NOW(),
+  date_modification TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   departement_id    INT NOT NULL,
    FOREIGN KEY(departement_id) REFERENCES departement(departement_id)
 );
@@ -41,9 +44,11 @@ CREATE TABLE lit (
   lit_id            INT NOT NULL AUTO_INCREMENT,
   disponible        BOOLEAN DEFAULT 1,
   type_lit          ENUM('Standard', 'Pédiatrique', 'Intensif'),
-  date_creation     DATE DEFAULT NOW(),
-  date_modification DATE DEFAULT NOW(),
-  chambre        INT
+  date_creation     TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  date_modification TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  chambre        INT,
+  departement_id INT NOT NULL,
+  FOREIGN   KEY(departement_id) REFERENCES departement(departement_id)
 );
 
 CREATE TABLE patient (
@@ -55,8 +60,8 @@ CREATE TABLE patient (
   contact           VARCHAR(255),
   adresse           VARCHAR(255),
   actif             BOOLEAN,
-  date_creation     DATE DEFAULT NOW(),
-  date_modification DATE DEFAULT NOW(),
+  date_creation     TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  date_modification TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   lit_id            INT,
   FOREIGN KEY(lit_id) REFERENCES lit(lit_id),
   departement_id INT,
@@ -72,8 +77,8 @@ CREATE TABLE personnel_medical (
   contact              VARCHAR(255),
   adresse              VARCHAR(255),
   specialite           VARCHAR(255),
-  date_creation        DATE DEFAULT NOW(),
-  date_modification    DATE DEFAULT NOW(),
+  date_creation        TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  date_modification    TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   departement_id       INT,
   FOREIGN KEY(departement_id) REFERENCES departement(departement_id)
 );
@@ -82,19 +87,17 @@ CREATE TABLE transfert_medical (
   PRIMARY KEY (tranfert_id),
   tranfert_id             INT NOT NULL AUTO_INCREMENT,
   raison                  VARCHAR(255),
-  date_creation           DATE DEFAULT NOW(),
+  date_creation           TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   transfert_status        BOOLEAN,              
   departement_source      INT NOT NULL,
-   FOREIGN KEY(departement_source) REFERENCES departement(departement_id),
+  FOREIGN KEY(departement_source) REFERENCES departement(departement_id),
   patient_id              INT NOT NULL,
-   FOREIGN KEY(patient_id) REFERENCES patient(patient_id),
+  FOREIGN KEY(patient_id) REFERENCES patient(patient_id),
   departement_destination INT NOT NULL,
-   FOREIGN KEY(departement_destination) REFERENCES departement(departement_id)
+  FOREIGN KEY(departement_destination) REFERENCES departement(departement_id)
 );
 
 INSERT INTO departement (departement_id, departement_nom, departement_description) VALUES (1, "Général", ""), (2, "Pédiatrie", ""), (3, "Soins Intensif", ""), (4, "Réhabilitation", "");
-
-
 
 DELIMITER $$
 
@@ -111,10 +114,25 @@ BEGIN
 
     SET dep = 1;
 
+    WHILE i <= 100 DO 
+        INSERT INTO lit(type_lit, departement_id) 
+        VALUES ('Standard', dep) ;
+        SET i = i + 1 ;
+    END WHILE;
+
+
 
 -- Departement 3 (Soins Intensifs) --------------------------------------------------
 
     SET dep = 3;
+
+    SET i = 1;
+
+    WHILE i <= 100 DO 
+        INSERT INTO lit(type_lit, departement_id) 
+        VALUES ('Intensifs', dep) ;
+        SET i = i + 1 ;
+    END WHILE;
 
 
 
@@ -180,10 +198,16 @@ BEGIN
     SET i = 1;
     SET dep = 2;
 
-    -- Chambres ------------------------------------------------
-  
+    -- LIT ------------------------------------------------
+    WHILE i <= 100 DO 
+        INSERT INTO lit(type_lit, departement_id) 
+        VALUES ('Pédiatrique', dep) ;
+        SET i = i + 1 ;
+    END WHILE;
+
 
     -- Equipement ----------------------------------------------
+    SET i = 1;
     WHILE i <= 50 DO
         INSERT INTO equipement (type_equipement, departement_id)
         VALUES ('Stéthoscope Pédiatrique', dep);
@@ -243,9 +267,15 @@ BEGIN
     SET i = 1;
     SET dep = 4;
 
-    
+    WHILE i <= 50 DO 
+        INSERT INTO lit(type_lit, departement_id) 
+        VALUES ('Standard', dep) ;
+        SET i = i + 1 ;
+    END WHILE;
 
     -- Equipement --------------------------
+    SET i = 1;
+
     WHILE i <= 15 DO
         INSERT INTO equipement (type_equipement, departement_id)
         VALUES ("Exosquelette pédiatrique", dep);
@@ -283,36 +313,6 @@ BEGIN
         VALUES ('Appareils de stimulation nerveuse électrique transcutanée', dep);
         SET i = i + 1;
     END WHILE;
-
-    -- global --
-
-    SET i = 0;
-
-    WHILE i <= 300 DO 
-        INSERT INTO lit(type_lit) 
-        VALUES ('Standard') ;
-        SET i = i + 1 ;
-    END WHILE;
-
-    SET i = 0;
-
-    WHILE i <= 120 DO 
-        INSERT INTO lit(type_lit) 
-        VALUES ('Pédiatrique') ;
-        SET i = i + 1 ;
-    END WHILE;
-
-    SET i = 0;
-
-    WHILE i <= 100 DO 
-        INSERT INTO lit(type_lit) 
-        VALUES ('Intensif') ;
-        SET i = i + 1 ;
-    END WHILE;
-
-
-
-
 
 END$$
 
