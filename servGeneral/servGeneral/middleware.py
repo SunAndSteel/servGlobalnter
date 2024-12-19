@@ -2,8 +2,6 @@ from django.http import HttpResponseForbidden
 from django.shortcuts import redirect
 
 
-
-
 ALLOWED_IP_VLAN10 = "172.16.0.0/16"
 ALLOWED_IP_VLAN20 = "172.17.0.0/16"
 ALLOWED_IP_VLAN30 = "172.18.0.0/16"
@@ -37,4 +35,3 @@ class IPValidationMiddleware:
         else:
             ip = request.META.get('REMOTE_ADDR')
         return ip
-

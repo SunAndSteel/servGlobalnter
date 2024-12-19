@@ -1,7 +1,7 @@
 # Serveur global linux django
 - Florent Urbain G1
 - Kyllian Evrard G2
-- Max Decamps G3
+- Max Decamps G3    
 - Antoine Mauroit G4
 
 ## Utilisation de git

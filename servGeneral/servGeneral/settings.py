@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'servGeneral',
+    'synchroDB',
 ]
 
 MIDDLEWARE = [
@@ -66,8 +67,8 @@ WSGI_APPLICATION = 'servGeneral.wsgi.application'
 
 DB = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': BASE_DIR / 'db/dbglobale.mysql',
     }
 }
 
@@ -103,6 +104,9 @@ STATIC_ROOT = 'srv/web/static'
 
 STATIC_URL = 'static/'
 
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
@@ -114,15 +118,10 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
 ]
 
-SECURE_BROWSER_XSS_FILTER = True
-SECURE_CONTENT_TYPE_NOSNIFF = True
+AUTH_LDAP_SERVER_URI = "ldap://SERVER-HOPITAL.hopital.lan"
+AUTH_LDAP_BIND_DN = "CN=LDAPUsers,CN=Users,DC=hopital,DC=lan"
+AUTH_LDAP_BIND_PASSWORD = "PASSWORD"
 
-# LDAP Server Settings
-AUTH_LDAP_SERVER_URI = "ldap://dc.hopital.lan"
-AUTH_LDAP_BIND_DN = "CN=LDAPUser,CN=Users,DC=hopital,DC=lan"
-AUTH_LDAP_BIND_PASSWORD = "password"
-
-# Map LDAP attributes to Django user fields
 AUTH_LDAP_USER_ATTR_MAP = {
   "username": "sAMAccountName",
   "first_name": "givenName",
